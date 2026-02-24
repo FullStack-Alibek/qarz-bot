@@ -1,6 +1,8 @@
 const { Telegraf } = require("telegraf")
 const { BOT_TOKEN } = require("./core/env")
 const logger = require("./core/logger")
+const express = require("express")
+const app = express()
 
 const registerHandlers = require("./modules")
 
@@ -10,7 +12,7 @@ require("./core/rateLimit")(bot)
 require("./core/reminder")(bot)
 
 bot.use((ctx, next) => {
-    if(ctx.chat.type !== "private") {
+    if (ctx.chat.type !== "private") {
         return ctx.reply("❌ Bot faqat shaxsiy chatda ishlaydi")
     }
 
@@ -19,7 +21,7 @@ bot.use((ctx, next) => {
 
 bot.command("myid", (ctx) => {
     ctx.reply("Sizning ID: " + ctx.from.id)
-})  
+})
 
 registerHandlers(bot)
 
@@ -35,3 +37,12 @@ process.on("uncaughtException", (e) => {
 
 process.once("SIGINT", () => bot.stop("SIGINT"))
 process.once("SIGTERM", () => bot.stop("SIGTERM"))
+
+app.get("/", (req, res) => {
+    res.send("🤖 Bot ishlayapti")
+})
+
+const Port = process.env.PORT || 5000
+app.listen(Port, () => {
+    console.log("Web server running on port", Port)
+})
