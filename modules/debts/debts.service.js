@@ -10,5 +10,5 @@ exports.addDebt = async ({userId, name, amount, dueDate}) => {
 }
 
 exports.getUserDebts = (userId) => repo.getByUser(userId)
-
 exports.getUserStats = (userId) => repo.getStats(userId)
+exports.deleteDebt = (id) => repo.deleteDebt(id)

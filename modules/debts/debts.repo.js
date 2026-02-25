@@ -13,12 +13,12 @@ exports.create = async ({ userId, name, amount, dueDate }) => {
 
 exports.getByUser = async (userId) => {
     const { rows } = await pool.query(
-        `SELECT client_name, amount FROM debts
+        `SELECT id, client_name, amount
+         FROM debts
          WHERE user_id = $1
          ORDER BY id DESC`,
         [userId]
     )
-
     return rows
 }
 
@@ -53,4 +53,8 @@ exports.getByTelegram = async (telegramId) => {
     `, [telegramId])
 
     return rows
+}
+
+exports.deleteDebt = async(id) => {
+    await pool.query("DELETE FROM debts WHERE id = $1", [id])
 }

@@ -52,32 +52,32 @@ module.exports = (bot) => {
 
         if (state.step === "date") {
             const input = text.trim()
-        
+
             const isValidFormat = /^\d{4}-\d{2}-\d{2}$/.test(input)
-        
+
             if (!isValidFormat) {
                 return ctx.reply("❌ Sana noto'g'ri format\nMasalan: 2026-03-31")
             }
-        
+
             const dueDate = new Date(input)
-        
+
             if (isNaN(dueDate.getTime())) {
                 return ctx.reply("❌ Noto'g'ri sana")
             }
-        
+
             const user = await userRepo.getByTelegram(ctx.from.id)
-        
+
             await debtsService.addDebt({
                 userId: user.id,
                 name: state.name,
                 amount: state.amount,
                 dueDate: input
             })
-        
+
             const formatted = new Intl.NumberFormat("uz-UZ").format(state.amount)
-        
+
             clearState(ctx.from.id)
-        
+
             return ctx.reply(`
         ✅ Qarz qo'shildi
         
@@ -89,5 +89,16 @@ module.exports = (bot) => {
         📊 Statistika bo'limida ko'ring
         `)
         }
+    })
+
+    bot.action(/delete_(.+)/, async (ctx) => {
+        const debtId = ctx.match[1]
+
+        await debtsService.deleteDebt(debtId)
+
+        Markup.inlineKeyboard([
+            [Markup.button.callback("⚠️ Ha, o'chir", `delete_${d.id}`)],
+            [Markup.button.callback("Bekor", "cancel")]
+        ])
     })
 }

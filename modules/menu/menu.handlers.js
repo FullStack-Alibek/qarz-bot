@@ -3,6 +3,7 @@ const debtsService = require("../debts/debts.service")
 const userRepo = require("../users/users.repo")
 const excelService = require("../debts/export.service")
 const { clearState } = require("../../core/state")
+const { Markup } = require("telegraf")
 
 module.exports = (bot) => {
     bot.start(async (ctx) => {
@@ -15,34 +16,27 @@ module.exports = (bot) => {
         const debts = await debtsService.getUserDebts(user.id)
 
         if (!debts.length) {
-            return ctx.reply(`
-        📭 Sizda hali qarzlar yo'q
-        
-        ➕ Birinchi qarzni qo'shing
-        va statistikani kuzating.
-        
-        💡 Qarz nazorati = pul nazorati
-            `)
+            return ctx.reply("📭 Qarzlar yo‘q")
         }
 
         let total = 0
 
-        const list = debts.map((d, i) => {
+        for (const d of debts) {
             total += Number(d.amount)
             const formatted = new Intl.NumberFormat("uz-UZ").format(d.amount)
-            return `${i + 1}. ${d.client_name} — ${formatted} so'm`
-        }).join("\n")
+
+            await ctx.reply(
+                `👤 ${d.client_name}\n💰 ${formatted} so'm`,
+                Markup.inlineKeyboard([
+                    [
+                        Markup.button.callback("❌ O‘chirish", `delete_${d.id}`)
+                    ]
+                ])
+            )
+        }
 
         const totalFormatted = new Intl.NumberFormat("uz-UZ").format(total)
-
-        ctx.reply(`
-        📋 Mening qarzlarim
-            
-            ${list}
-            
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            💰 Jami: ${totalFormatted} so'm
-        `)
+        await ctx.reply(`💰 Jami: ${totalFormatted} so'm`)
     })
 
 
@@ -96,7 +90,7 @@ module.exports = (bot) => {
         `, plansInline)
     })
 
-    bot.hears("💳 To'lov qilish", (ctx) => {
+    bot.hears("💳 Obuna", (ctx) => {
         ctx.reply(`
             💳 To'lov uchun karta:
             0000 0000 0000 0000
@@ -185,5 +179,19 @@ Nimalar olasiz:
 
 ⏳ Launch narxi — keyin qimmatlashadi
         `)
+    })
+
+    bot.action(/delete_(.+)/, async (ctx) => {
+        try {
+            const debtId = ctx.match[1]
+
+            await debtsService.deleteDebt(debtId)
+
+            await ctx.answerCbQuery("🗑 O'chirildi")
+            await ctx.editMessageText("❌ Qarz o'chirildi")
+        } catch (err) {
+            console.error(err)
+            await ctx.answerCbQuery("Xatolik")
+        }
     })
 }
