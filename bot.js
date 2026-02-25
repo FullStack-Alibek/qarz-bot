@@ -38,6 +38,8 @@ process.on("uncaughtException", (e) => {
 process.once("SIGINT", () => bot.stop("SIGINT"))
 process.once("SIGTERM", () => bot.stop("SIGTERM"))
 
+console.log("DB:", process.env.DATABASE_URL)
+
 app.get("/", (req, res) => {
     res.send("🤖 Bot ishlayapti")
 })
