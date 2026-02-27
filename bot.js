@@ -10,6 +10,7 @@ const bot = new Telegraf(BOT_TOKEN)
 
 require("./core/rateLimit")(bot)
 require("./core/reminder")(bot)
+require("./modules/admin/forward.handlers")(bot)
 
 bot.use((ctx, next) => {
     if (ctx.chat.type !== "private") {
