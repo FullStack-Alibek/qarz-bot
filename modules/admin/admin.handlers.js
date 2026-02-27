@@ -27,9 +27,7 @@ module.exports = (bot) => {
             return ctx.reply("User xabariga reply qiling")
 
         const id = ctx.message.reply_to_message.from.id
-        await userRepo.setPlan(id, "vip")
-
-        ctx.reply(`✅ VIP berildi\nID: ${id}`)
+        await givePlan(bot, id, "vip", ctx)
     })
 
     bot.command("premium", async (ctx) => {
@@ -38,9 +36,7 @@ module.exports = (bot) => {
             return ctx.reply("User xabariga reply qiling")
 
         const id = ctx.message.reply_to_message.from.id
-        await userRepo.setPlan(id, "premium")
-
-        ctx.reply(`🚀 Premium berildi\nID: ${id}`)
+        await givePlan(bot, id, "premium", ctx)
     })
 
     bot.command("lifetime", async (ctx) => {
@@ -49,26 +45,39 @@ module.exports = (bot) => {
             return ctx.reply("User xabariga reply qiling")
 
         const id = ctx.message.reply_to_message.from.id
-        await userRepo.setPlan(id, "lifetime")
-
-        ctx.reply(`👑 Lifetime berildi\nID: ${id}`)
+        await givePlan(bot, id, "lifetime", ctx)
     })
 
     bot.action(/give_vip_(.+)/, async (ctx) => {
         const id = ctx.match[1]
-        await userRepo.setPlan(id, "vip")
-        await ctx.editMessageCaption("✅ VIP berildi")
+        await givePlan(bot, id, "vip", ctx, true)
     })
 
     bot.action(/give_premium_(.+)/, async (ctx) => {
         const id = ctx.match[1]
-        await userRepo.setPlan(id, "premium")
-        await ctx.editMessageCaption("🚀 Premium berildi")
+        await givePlan(bot, id, "premium", ctx, true)
     })
 
     bot.action(/give_lifetime_(.+)/, async (ctx) => {
         const id = ctx.match[1]
-        await userRepo.setPlan(id, "lifetime")
-        await ctx.editMessageCaption("👑 Lifetime berildi")
+        await givePlan(bot, id, "lifetime", ctx, true)
     })
+}
+
+async function givePlan(bot, userId, plan, ctx, fromButton = false) {
+    await userRepo.setPlan(userId, plan)
+
+    const messages = {
+        vip: `🎉 Tabriklaymiz!\nSizga VIP aktiv qilindi 💎`,
+        premium: `🚀 Tabriklaymiz!\nSizga PREMIUM aktiv qilindi`,
+        lifetime: `👑 TABRIKLAYMIZ!\nSiz Founder Lifetime oldingiz!`
+    }
+
+    await bot.telegram.sendMessage(userId, messages[plan])
+
+    if (fromButton) {
+        await ctx.editMessageCaption(`✅ ${plan.toUpperCase()} berildi`)
+    } else {
+        await ctx.reply(`✅ ${plan.toUpperCase()} berildi\nID: ${userId}`)
+    }
 }
