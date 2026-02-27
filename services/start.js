@@ -1,4 +1,3 @@
-const pool = require("../config/db")
 
 module.exports = async (ctx) => {
     const telegramId = ctx.from.id

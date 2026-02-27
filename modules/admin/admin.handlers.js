@@ -1,53 +1,56 @@
-    const userRepo = require("../users/users.repo")
-    const debtsRepo = require("../debts/debts.repo")
+const userRepo = require("../users/users.repo")
+const debtsRepo = require("../debts/debts.repo")
 
-    const ADMIN_id = Number(process.env.ADMIN_ID)
+const ADMIN_ID = Number(process.env.ADMIN_ID)
 
-    module.exports = (bot) => {
-        const isAdmin = (ctx) => ctx.from.id === ADMIN_id
+module.exports = (bot) => {
+    const isAdmin = (ctx) => ctx.from.id === ADMIN_ID
 
-        bot.command("admin", async (ctx) => {
-            if (!isAdmin(ctx)) {
-                return ctx.reply("❌ Admin emassan")
-            }
+    bot.command("admin", async (ctx) => {
+        if (!isAdmin(ctx)) return ctx.reply("❌ Siz admin emassiz")
 
-            const users = await userRepo.count()
-            const stats = await debtsRepo.globalStats()
+        const users = await userRepo.count()
+        const stats = await debtsRepo.globalStats()
 
-            ctx.reply(`
-    👑 Admin panel
+        ctx.reply(`
+👑 Admin panel
 
-    👥 Users: ${users}
-    📊 Qarzlar: ${stats.count}
-    💰 Summa: ${stats.sum} so'm
-    `)
-        })
+👥 Users: ${users}
+📊 Qarzlar: ${stats.count}
+💰 Summa: ${stats.sum} so'm
+        `)
+    })
 
-        bot.command("vip", async (ctx) => {
-            if (!isAdmin(ctx)) return ctx.reply("❌ Admin emassiz")
+    bot.command("vip", async (ctx) => {
+        if (!isAdmin(ctx)) return ctx.reply("❌ Admin emassiz")
+        if (!ctx.message.reply_to_message)
+            return ctx.reply("User xabariga reply qiling")
 
-            if (!ctx.message.reply_to_message) {
-                return ctx.reply("User xabariga reply qiling")
-            }
+        const id = ctx.message.reply_to_message.from.id
+        await userRepo.setPlan(id, "vip")
 
-            const targetId = ctx.message.reply_to_message.from.id
+        ctx.reply(`✅ VIP berildi\nID: ${id}`)
+    })
 
-            await userRepo.setPlan(targetId, "vip")
+    bot.command("premium", async (ctx) => {
+        if (!isAdmin(ctx)) return ctx.reply("❌ Admin emassiz")
+        if (!ctx.message.reply_to_message)
+            return ctx.reply("User xabariga reply qiling")
 
-            ctx.reply(`✅ Vip berildi\nID: ${targetId}`)
-        })
+        const id = ctx.message.reply_to_message.from.id
+        await userRepo.setPlan(id, "premium")
 
-        bot.command("premium", async (ctx) => {
-            if (!isAdmin(ctx)) return ctx.reply("❌ Admin emassiz")
+        ctx.reply(`🚀 Premium berildi\nID: ${id}`)
+    })
 
-            if (!ctx.message.reply_to_message) {
-                return ctx.reply("User xabariga reply qiling")
-            }
+    bot.command("lifetime", async (ctx) => {
+        if (!isAdmin(ctx)) return ctx.reply("❌ Admin emassiz")
+        if (!ctx.message.reply_to_message)
+            return ctx.reply("User xabariga reply qiling")
 
-            const targetId = ctx.message.reply_to_message.from.id
+        const id = ctx.message.reply_to_message.from.id
+        await userRepo.setPlan(id, "lifetime")
 
-            await userRepo.setPlan(targetId, "premium")
-
-            ctx.reply(`✅ Premium berildi\nID: ${targetId}`)
-        })
-    }
+        ctx.reply(`👑 Lifetime berildi\nID: ${id}`)
+    })
+}
