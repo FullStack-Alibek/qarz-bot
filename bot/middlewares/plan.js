@@ -4,7 +4,7 @@ module.exports = (requiredPlan) => {
     return async (ctx, next) => {
         const userPlan = ctx.user.plan
 
-        const order = ["free", "vip", "premium"]
+        const order = ["free", "vip", "premium", "lifetime"]
 
         if (order.indexOf(userPlan) < order.indexOf(requiredPlan)) {
             return ctx.reply("🔒 Bu funksiya premiumda")

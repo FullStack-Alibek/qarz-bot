@@ -93,7 +93,7 @@ module.exports = (bot) => {
     bot.hears("💳 Obuna", (ctx) => {
         ctx.reply(`
             💳 To'lov uchun karta:
-            0000 0000 0000 0000
+            6262 5707 8571 6129
             
             To'lovdan keyin:
             📸 To'lov chekini yuboring
@@ -130,7 +130,8 @@ Nimalar bor:
 • Tez va qulay ishlash
 
 💳 To'lov:
-0000 0000 0000 0000
+            6262 5707 8571 6129
+
 
 📸 Chek yuboring — 5 daqiqada aktiv qilamiz
         `)
@@ -151,7 +152,8 @@ VIP + qo'shimcha:
 💡 Agar qarzlar ko'p bo'lsa — Premium oling
 
 💳 To'lov:
-0000 0000 0000 0000
+            6262 5707 8571 6129
+
 
 📸 Chek yuboring — darhol aktiv qilamiz
         `)
@@ -173,7 +175,7 @@ Nimalar olasiz:
 💡 1 martalik to'lov = abadiy xotirjamlik
 
 💳 To'lov:
-0000 0000 0000 0000
+            6262 5707 8571 6129
 
 📸 Chek yuboring — founder sifatida qo'shamiz
 
