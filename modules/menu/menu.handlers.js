@@ -90,7 +90,7 @@ module.exports = (bot) => {
         `, plansInline)
     })
 
-    bot.hears("💳 Obuna", (ctx) => {
+    bot.hears("💳 To'lov qilish", (ctx) => {
         ctx.reply(`
             💳 To'lov uchun karta:
             6262 5707 8571 6129
