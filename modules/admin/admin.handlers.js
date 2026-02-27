@@ -53,4 +53,22 @@ module.exports = (bot) => {
 
         ctx.reply(`👑 Lifetime berildi\nID: ${id}`)
     })
+
+    bot.action(/give_vip_(.+)/, async (ctx) => {
+        const id = ctx.match[1]
+        await userRepo.setPlan(id, "vip")
+        await ctx.editMessageCaption("✅ VIP berildi")
+    })
+
+    bot.action(/give_premium_(.+)/, async (ctx) => {
+        const id = ctx.match[1]
+        await userRepo.setPlan(id, "premium")
+        await ctx.editMessageCaption("🚀 Premium berildi")
+    })
+
+    bot.action(/give_lifetime_(.+)/, async (ctx) => {
+        const id = ctx.match[1]
+        await userRepo.setPlan(id, "lifetime")
+        await ctx.editMessageCaption("👑 Lifetime berildi")
+    })
 }

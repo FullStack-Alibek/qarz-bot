@@ -1,49 +1,37 @@
+const { Markup } = require("telegraf")
+
 const ADMIN_ID = Number(process.env.ADMIN_ID)
 
 module.exports = (bot) => {
 
-    // PHOTO (chek)
     bot.on("photo", async (ctx) => {
-        try {
-            const user = ctx.from
-
-            const caption = `
-📸 Yangi chek!
-
-👤 User: ${user.first_name}
-🆔 ID: ${user.id}
-🔗 @${user.username || "username yo'q"}
-
-Reply qilib tarif bering:
- /vip /premium /lifetime
-            `
-
-            // Adminga forward
-            await ctx.telegram.sendPhoto(
-                ADMIN_ID,
-                ctx.message.photo.at(-1).file_id,
-                { caption }
-            )
-
-            await ctx.reply("✅ Chek qabul qilindi. Tez orada tarif beriladi.")
-
-        } catch (err) {
-            console.error(err)
-        }
-    })
-
-    // FILE (pdf, screenshot)
-    bot.on("document", async (ctx) => {
         const user = ctx.from
 
-        await ctx.telegram.sendDocument(
+        const caption = `
+📸 Yangi chek!
+
+👤 ${user.first_name}
+🆔 ID: ${user.id}
+🔗 @${user.username || "yo‘q"}
+        `
+
+        await ctx.telegram.sendPhoto(
             ADMIN_ID,
-            ctx.message.document.file_id,
+            ctx.message.photo.at(-1).file_id,
             {
-                caption: `📄 Yangi fayl\nID: ${user.id}\nReply qilib tarif bering`
+                caption,
+                ...Markup.inlineKeyboard([
+                    [
+                        Markup.button.callback("💎 VIP", `give_vip_${user.id}`),
+                        Markup.button.callback("🚀 Premium", `give_premium_${user.id}`)
+                    ],
+                    [
+                        Markup.button.callback("👑 Lifetime", `give_lifetime_${user.id}`)
+                    ]
+                ])
             }
         )
 
-        await ctx.reply("✅ Fayl qabul qilindi.")
+        await ctx.reply("✅ Chek qabul qilindi")
     })
 }
