@@ -81,13 +81,13 @@ module.exports = (bot) => {
         `, plansInline)
     })
 
-    bot.hears(/To'lov qilish/i, (ctx) => {
+    bot.hears(/to.?lov/i, (ctx) => {
         ctx.reply(`
-💳 To'lov uchun karta:
-6262 5707 8571 6129
-
-📸 To'lovdan keyin chek yuboring
-Admin tarifni aktiv qiladi
+    💳 To'lov uchun karta:
+    6262 5707 8571 6129
+    
+    📸 To'lovdan keyin chek yuboring
+    Admin sizga tarif beradi
         `)
     })
 
